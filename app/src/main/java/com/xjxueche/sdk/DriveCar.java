@@ -13,7 +13,6 @@ import io.reactivex.subjects.Subject;
 
 public class DriveCar {
         private Subject<CarSignInfo> mCarSignalEvent;
-        private Observable mObservable;
 
         public DriveCar()
         {
