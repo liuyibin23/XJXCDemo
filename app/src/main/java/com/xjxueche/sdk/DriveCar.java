@@ -12,51 +12,44 @@ import io.reactivex.subjects.Subject;
  */
 
 public class DriveCar {
-        private Subject<String> mCarSignalEvent;
+        private Subject<CarSignInfo> mCarSignalEvent;
+        private Observable mObservable;
 
         public DriveCar()
         {
-                mCarSignalEvent = PublishSubject.create();
+                mCarSignalEvent = PublishSubject.<CarSignInfo>create().toSerialized();
         }
 
         public void ReadInfo(String data)
         {
-                mCarSignalEvent.onNext(data);
-            mCarSignalEvent.just("1").subscribe(new Consumer<String>() {
-                @Override
-                public void accept(@NonNull String s) throws Exception {
-                    Object o1 = s;
-                }
-            });
-//                mCarSignalEvent.just("1").subscribe(new Consumer() {
+
+            mCarSignalEvent.onNext(processCarData(data));
+
+
+//            mCarSignalEvent.map(new Function<String,CarSignInfo>() {
 //                        @Override
-//                        public void accept(@NonNull Object o) throws Exception {
-//                                Object o1 = o;
+//                        public CarSignInfo apply(@NonNull String data) throws Exception {
+//
+//                                return processCarData(data);
 //                        }
 //                });
 
-
-                mCarSignalEvent.map(new Function<String,CarSignInfo>() {
-                        @Override
-                        public CarSignInfo apply(@NonNull String data) throws Exception {
-
-                                return processCarData(data);
-                        }
-                });
         }
 
         private CarSignInfo processCarData(String data)
         {
                 CarSignInfo carSignInfo = new CarSignInfo();
                 String[] signals = data.split(",");
-                carSignInfo.setLiHe(signals[0] == "1");
-                carSignInfo.setShaChe(signals[1] == "1");
+                carSignInfo.setLiHe(signals[0].equals("1"));
+                carSignInfo.setShaChe(signals[1].equals("1"));
                 carSignInfo.setSuDu(Double.parseDouble(signals[2]));
                 return carSignInfo;
         }
 
         public Observable<CarSignInfo> toObserverable()
         {
+//            return mObservable.ofType(Object.class);
+//            return mCarSignalEvent.ofType(Object.class);
                 return mCarSignalEvent.ofType(CarSignInfo.class);
         }
 

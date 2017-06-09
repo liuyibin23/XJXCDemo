@@ -53,7 +53,6 @@ public class RxBus {
     public void post(Object object)
     {
         bus.onNext(object);
-//        bus.just(object);
     }
 
     /**
