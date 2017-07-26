@@ -1,8 +1,11 @@
 package com.xjxueche.xjxcdemo
 
 import com.xjxueche.sdk.DriveCar3
+import com.xjxueche.utils.PublishScheduler
+import io.reactivex.Scheduler
 import io.reactivex.annotations.NonNull
 import io.reactivex.functions.Consumer
+import io.reactivex.schedulers.Schedulers
 import org.junit.Test
 import org.junit.Assert.*
 /**
@@ -24,7 +27,7 @@ class ExampleUnitTestForK {
         //        CompositeDisposable
     }
 
-    @Test
+//    @Test
     @Throws(Exception::class)
     fun DriveCarTest2(){
         val car = DriveCar3()
@@ -36,6 +39,30 @@ class ExampleUnitTestForK {
         }
         val data = "1,0,10.0"
         car.ReadInfo(data)
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun PublishSchedulerTest(){
+        val publishScheduler = PublishScheduler<String>()
+//        publishScheduler.DataArrived.subscribeWith<String>{data ->
+//            System.out.println(Thread.currentThread())
+//            System.out.println(data)
+//        }
+        val disposable = publishScheduler.DataArrived.subscribe{ data ->
+            System.out.println(Thread.currentThread())
+            System.out.println(data)
+        }
+        val datas = listOf<String>("","","","","","")
+        var i : Int = 0
+        while (i < 50){
+            publishScheduler.Add(i.toString())
+            System.out.println(Thread.currentThread().toString() + " send"+ i)
+            i++
+            Thread.sleep(200)
+        }
+
+        disposable.dispose()
     }
 
 }

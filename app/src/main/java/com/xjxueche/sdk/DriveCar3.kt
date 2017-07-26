@@ -15,6 +15,8 @@ class DriveCar3 {
     var SuDu : Double = 0.0
 
     private val mCarSignalEvent: Subject<CarSignalInfo2> = PublishSubject.create<CarSignalInfo2>().toSerialized()
+    val signalChanged: Observable<CarSignalInfo2>
+        get() = mCarSignalEvent.ofType<CarSignalInfo2>(CarSignalInfo2::class.java)
 
     fun ReadInfo(data: String) {
 
@@ -52,7 +54,6 @@ class DriveCar3 {
 
     //            return mObservable.ofType(Object.class);
     //            return mCarSignalEvent.ofType(Object.class);
-    val signalChanged: Observable<CarSignalInfo2>
-        get() = mCarSignalEvent.ofType<CarSignalInfo2>(CarSignalInfo2::class.java)
+
 
 }
