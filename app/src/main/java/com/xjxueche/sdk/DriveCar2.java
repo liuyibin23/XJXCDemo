@@ -1,7 +1,5 @@
 package com.xjxueche.sdk;
 
-import com.xjxueche.utils.MoreReactiveList;
-
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
@@ -44,7 +42,7 @@ public class DriveCar2 {
                         .toSerialized();
     }
 
-    public void onReadInfo(CarSignInfo data)
+    public void onReadInfo(CarSignalInfo data)
     {
         if(data.isLiHe() != mLiHe){
             mLiHe = data.isLiHe();

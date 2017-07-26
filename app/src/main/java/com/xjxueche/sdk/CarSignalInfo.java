@@ -4,7 +4,7 @@ package com.xjxueche.sdk;
  * Created by 刘乙镔 on 2017/6/8.
  */
 
-public class CarSignInfo {
+public class CarSignalInfo {
     private boolean mLiHeChanged;
     private boolean mShaCheChanged;
     private boolean mSuDuChanged;

@@ -1,6 +1,6 @@
 package com.xjxueche.xjxcdemo;
 
-import com.xjxueche.sdk.CarSignInfo;
+import com.xjxueche.sdk.CarSignalInfo;
 import com.xjxueche.sdk.DriveCar;
 import com.xjxueche.sdk.RxBus;
 import com.xjxueche.utils.MoreReactiveList;
@@ -8,14 +8,11 @@ import com.xjxueche.utils.ReactiveList;
 
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
-
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.reactivex.subjects.PublishSubject;
 
 import static org.junit.Assert.*;
 
@@ -33,20 +30,21 @@ public class ExampleUnitTest {
     @Test
     public  void DriveCarTest() throws Exception{
         DriveCar car = new DriveCar();
-        car.toObserverable().subscribe(new Consumer<Object>() {
+        car.getSignalChanged().subscribe(new Consumer<Object>() {
             @Override
             public void accept(@NonNull Object o) throws Exception {
-                CarSignInfo carSignInfo = (CarSignInfo)o;
-                assertEquals(true,carSignInfo.isLiHe());
-                assertEquals(false,carSignInfo.isShaChe());
-                assertEquals(10.0,carSignInfo.getSuDu(),0);
+                CarSignalInfo carSignalInfo = (CarSignalInfo)o;
+                assertEquals(true, carSignalInfo.isLiHe());
+                assertEquals(false, carSignalInfo.isShaChe());
+                assertEquals(10.0, carSignalInfo.getSuDu(),0);
             }
         });
         String data = "1,0,10.0";
         car.ReadInfo(data);
-
+//        CompositeDisposable
     }
 
+    //region RxBusTest
     @Test
     public void RxBusTest()throws Exception{
 //        RxBus bus = new RxBus();
@@ -58,6 +56,7 @@ public class ExampleUnitTest {
         });
         RxBus.getInstance().post("111");
     }
+    //endregion
 
     @Test
     public void ReactiveListTest(){
