@@ -4,17 +4,14 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
-import kotlin.jvm.Throws;
 
 /**
  * Created by 刘乙镔 on 2017/7/26.
@@ -25,8 +22,18 @@ public class TcpClient {
     private ObservableOnSubscribe<String> subscribe;
     private Socket socket;
     private boolean isConnected = true;
+    private final String ip;
+    private final int port;
 
-    public  Observable<String> tcpData(final String ip,final int port) throws Exception {
+    public TcpClient(String ip, int port) {
+        this.ip = ip;
+        this.port = port;
+    }
+
+    /**
+     * 以Observable的方式对外提供TCP数据流
+     * */
+    public  Observable<String> tcpData() throws Exception {
 
 //        socket = new Socket(ip,port);
 //        final BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -37,11 +44,11 @@ public class TcpClient {
             @Override
             public void subscribe(@NonNull ObservableEmitter<String> e) throws Exception {
                 BufferedReader in = null;
-                PrintWriter out = null;
+//                PrintWriter out = null;
                 try{
                     socket = new Socket(ip,port);
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+//                    out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
                     ObservableEmitter<String> emitter = e;
                     char[] buf = new char[256];
                     //接收数据这不需要新开线程，由observable的subscribeOn来指定线程
@@ -59,10 +66,10 @@ public class TcpClient {
                 }
                 finally{
 
-                    if(out != null){
-                        out.flush();
-                        out.close();
-                    }
+//                    if(out != null){
+//                        out.flush();
+//                        out.close();
+//                    }
                     if(in != null){
                         in.close();
                     }
@@ -89,38 +96,37 @@ public class TcpClient {
         return tcpObservable;
     }
 
+    public void sendData(String data){
+        if(socket != null){
+            try {
+                PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
+                out.write(data);
+                out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public boolean isConnected()
+    {
+        if(socket!= null){
+            return socket.isConnected();
+        }
+        return false;
+    }
+
     /**
      * 判断是否断开连接，断开返回true,没有返回false
      * @param socket
      * @return
      */
-    public Boolean isServerClose(Socket socket){
+    private Boolean isServerClose(Socket socket){
         try{
             socket.sendUrgentData(0xFF);//发送1个字节的紧急数据，默认情况下，服务器端没有开启紧急数据处理，不影响正常通信
             return false;
         }catch(Exception se){
             return true;
         }
-    }
-
-    private void sendOrder(String order,Socket socket) throws IOException {
-//        try {
-////            out.write(order.getBytes("UTF-8"));
-//            out.write(order);
-//            out.flush();
-////            return true;
-//        } catch (UnsupportedEncodingException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-////            return false;
-//        } catch (IOException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-////            return false;
-//        }
-        OutputStream out = socket.getOutputStream();
-        out.write(order.getBytes("UTF-8"));
-        out.flush();
-
     }
 }

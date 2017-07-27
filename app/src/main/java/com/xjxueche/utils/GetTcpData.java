@@ -30,7 +30,7 @@ public class GetTcpData extends UseCase<String,GetTcpData.Params>{
     @Override
     Observable<String> buildUseCaseObservable(GetTcpData.Params ipAndPort) {
         try {
-            return new TcpClient().tcpData(ipAndPort.ip,ipAndPort.port);
+            return TcpManager.getTcpClient(ipAndPort.ip,ipAndPort.port).tcpData();
         } catch (Exception e) {
             e.printStackTrace();
         }
