@@ -37,7 +37,7 @@ public class UseCaseTest {
 
             @Override
             public void onError(@NonNull Throwable e) {
-                //处理重连
+                //处理连接断开且超过重连次数
                 System.out.println("接收数据发生异常");
             }
 
@@ -46,9 +46,11 @@ public class UseCaseTest {
                 //连接正常断开
                 System.out.println("接收数据完成！");
             }
-        },null);
+        },GetTcpData.Params.ipAndPort("127.0.0.1",4001));
 
-        Thread.sleep(12000);
+        Thread.sleep(120000);
         tcpData.dispose();
     }
+
+
 }

@@ -53,7 +53,7 @@ class ExampleUnitTestForK {
             System.out.println(Thread.currentThread())
             System.out.println(data)
         }
-        val datas = listOf<String>("","","","","","")
+//        val datas = listOf<String>("","","","","","")
         var i : Int = 0
         while (i < 50){
             publishScheduler.Add(i.toString())

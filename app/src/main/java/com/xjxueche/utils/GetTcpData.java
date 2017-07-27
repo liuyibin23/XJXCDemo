@@ -16,7 +16,7 @@ import io.reactivex.observers.DisposableObserver;
  * Created by 刘乙镔 on 2017/7/26.
  */
 
-public class GetTcpData extends UseCase<String,Void>{
+public class GetTcpData extends UseCase<String,GetTcpData.Params>{
 
 //    val signleExecutor : ExecutorService = Executors.newSingleThreadExecutor()
 
@@ -28,9 +28,9 @@ public class GetTcpData extends UseCase<String,Void>{
     }
 
     @Override
-    Observable<String> buildUseCaseObservable(Void aVoid) {
+    Observable<String> buildUseCaseObservable(GetTcpData.Params ipAndPort) {
         try {
-            return TcpClient.tcpData();
+            return new TcpClient().tcpData(ipAndPort.ip,ipAndPort.port);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -38,9 +38,9 @@ public class GetTcpData extends UseCase<String,Void>{
     }
 
     @Override
-    public void publish(DisposableObserver<String> observer, Void aVoid) {
+    public void publish(DisposableObserver<String> observer, GetTcpData.Params ipAndPort) {
         //Hot observables
-        ConnectableObservable<String> observable = this.buildUseCaseObservable(aVoid)
+        ConnectableObservable<String> observable = this.buildUseCaseObservable(ipAndPort)
                 .subscribeOn(subscribeScheduler)
                 .observeOn(observeScheduler).retryWhen(new RetryWithDelay(20, 2000)).publish();
         observable.connect();
@@ -70,6 +70,7 @@ public class GetTcpData extends UseCase<String,Void>{
                                 // When this Observable calls onNext, the original Observable will be retried (i.e. re-subscribed).
 //                                printLog(tvLogs, "", "get error, it will try after " + retryDelayMillis
 //                                        + " millisecond, retry count " + retryCount);
+                                System.out.println(throwable.getMessage());
                                 System.out.println("连接异常，将在"+retryDelayMillis+"毫秒后重连！");
                                 return Observable.timer(retryDelayMillis,
                                         TimeUnit.MILLISECONDS);
@@ -80,4 +81,17 @@ public class GetTcpData extends UseCase<String,Void>{
                     });
         }
     }
+
+    public final static class  Params{
+        private final String ip;
+        private final int port;
+
+        Params(String ip, int port) {
+            this.ip = ip;
+            this.port = port;
+        }
+
+        public static Params ipAndPort(String ip, int port){ return new Params(ip,port);}
+    }
+
 }

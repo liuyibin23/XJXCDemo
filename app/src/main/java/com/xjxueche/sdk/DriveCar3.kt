@@ -52,8 +52,5 @@ class DriveCar3 {
         return carSignalInfo
     }
 
-    //            return mObservable.ofType(Object.class);
-    //            return mCarSignalEvent.ofType(Object.class);
-
 
 }
